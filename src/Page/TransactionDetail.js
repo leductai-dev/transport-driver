@@ -24,8 +24,8 @@ export default function TransactionDetail() {
     const history = useHistory();
     const [mapRegion, setMapRegion] = React.useState(null);
     // const {customer, data} = location.state
-    console.log("location")
-    // console.log(location)
+    console.log("history.state")
+    console.log(location)
     React.useEffect(() => {
         setMapRegion({
             latitude: 16.0774372,
@@ -34,6 +34,7 @@ export default function TransactionDetail() {
             latitudeDelta: 0.0421,
         });
     }, [location]);
+    const {customer, data} = location.state
 
     return (
         <View style={styles.Wraper}>
@@ -80,12 +81,12 @@ export default function TransactionDetail() {
                         }}
                     />
                     <View style={styles.wrapInfo}>
-                        <Text style={styles.clName}>customer.name</Text>
+                        <Text style={styles.clName}>Tên khách hàng:{customer.name}</Text>
                         <Text style={styles.clPhone}>
-                            Phone: customer.phone
+                            Phone: {customer.phone}
                         </Text>
                         <Text style={styles.clEmail}>
-                            Email: ductaidn992@gmail.com
+                            Email: {customer.email}
                         </Text>
                     </View>
                 </View>
@@ -117,12 +118,12 @@ export default function TransactionDetail() {
                     />
                     <View style={styles.wrapInfo}>
                         <Text style={styles.clName}>
-                            Người gửi: customer.name
+                            Người gửi: {data.shippingInfo.sender.name}
                         </Text>
                         <Text style={styles.clPhone}>
-                            Số điện thoại: customer.phone
+                            Số điện thoại: {data.shippingInfo.sender.phone}
                         </Text>
-                        <Text style={styles.clEmail}>Địa chỉ lấy hàng</Text>
+                        <Text style={styles.clEmail}>Địa chỉ lấy hàng: {data.shippingInfo.sender.address}</Text>
                     </View>
                 </View>
             </View>
@@ -154,12 +155,12 @@ export default function TransactionDetail() {
                     />
                     <View style={styles.wrapInfo}>
                         <Text style={styles.clName}>
-                            Người nhận: customer.name
+                            Người nhận: {data.shippingInfo.receiver.name}
                         </Text>
                         <Text style={styles.clPhone}>
-                            Số điện thoại: customer.phone
+                            Số điện thoại: {data.shippingInfo.receiver.phone}
                         </Text>
-                        <Text style={styles.clEmail}>Địa chỉ lấy hàng</Text>
+                        <Text style={styles.clEmail}>{data.shippingInfo.receiver.address}</Text>
                     </View>
                 </View>
             </View>
@@ -183,7 +184,7 @@ export default function TransactionDetail() {
                 >
                     <View style={styles.wrapInfo}>
                         <Text style={{ marginBottom: 5 }}>
-                            Tên sản phầm: this is tên sản phẩm
+                            Tên sản phầm: {data.shippingInfo.productInfo.productName}
                         </Text>
                         <View
                             style={{
@@ -193,10 +194,10 @@ export default function TransactionDetail() {
                             }}
                         >
                             <Text style={{ width: "50%" }}>
-                                Chiều dài: 1 (m)
+                                Chiều dài: {data.shippingInfo.productInfo.length} (m)
                             </Text>
                             <Text style={{ width: "50%" }}>
-                                Chiều rộng(m): 1 (m)
+                                Chiều rộng(m): {data.shippingInfo.productInfo.width} (m)
                             </Text>
                         </View>
                         <View
@@ -207,14 +208,14 @@ export default function TransactionDetail() {
                             }}
                         >
                             <Text style={{ width: "50%" }}>
-                                Chiều cao: 1 (m)
+                                Chiều cao: {data.shippingInfo.productInfo.height} (m)
                             </Text>
                             <Text style={{ width: "50%" }}>
-                                Khối lượng: 1 (kg)
+                                Khối lượng: {data.shippingInfo.productInfo.weight} (kg)
                             </Text>
                         </View>
                         <Text style={styles.clPhone}>
-                            Ghi chú: customer.phone
+                            Ghi chú: {data.note}
                         </Text>
                     </View>
                 </View>

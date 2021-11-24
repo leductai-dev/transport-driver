@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { app } from "../firebaseConfig";
 import {
     StyleSheet,
@@ -15,6 +15,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { NativeRouter, Route, Link } from "react-router-native";
 import { Ionicons } from "@expo/vector-icons";
 const { width, height } = Dimensions.get("screen");
+import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
 
 const HomeScreen = () => {
@@ -23,44 +24,81 @@ const HomeScreen = () => {
     const [showOptions, setshowOptions] = useState(false);
     const [totalTransaction, setTotalTransaction] = useState(null);
     const [transactions, setTransactions] = useState(null);
-    const currentUser = useSelector((state) => state.user).currentUser;
+    const currentUser = useSelector((state) => state.user);
+    const [token, setToken] = React.useState(null);
+    const [active, setActive] = React.useState("all");
+
+    async function registerForPushNotificationsAsync() {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status !== "granted") {
+            const { status } = await Notifications.requestPermissionsAsync();
+            if (status !== "granted") {
+                alert("Failed to get push token for push notification!");
+                return;
+            }
+        }
+
+        const token = (await Notifications.getExpoPushTokenAsync()).data;
+        return token;
+    }
 
     useEffect(() => {
         (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                setErrorMsg("Permission to access location was denied");
-            }
             try {
+                let { status } =
+                    await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                    setErrorMsg("Permission to access location was denied");
+                }
+
                 let location = await Location.getCurrentPositionAsync({});
-                console.log(location);
-                setMapRegion({
-                    latitude: location.coords.latitude,
+                setCurrentLocation({
                     longitude: location.coords.longitude,
+                    latitude: location.coords.latitude,
                     longitudeDelta: 0.0922,
                     latitudeDelta: 0.0421,
                 });
-                setCurrentLocation({
-                    latitude: location.coords.latitude,
+
+                setMapRegion({
                     longitude: location.coords.longitude,
+                    latitude: location.coords.latitude,
+                    longitudeDelta: 0.0922,
+                    latitudeDelta: 0.0421,
                 });
             } catch (error) {
-                Alert.alert("Có lôi xảy ra!");
-                throw error;
+                Alert.alert(error);
             }
         })();
     }, []);
+    
+    React.useEffect(() => {
+        registerForPushNotificationsAsync().then((token) => {
+            console.log("-----token--------")
+            console.log(token)
+            const db_Drivers = app
+            .database()
+            .ref()
+            .child(`/drivers/${currentUser.currentUser.driverId}`)
+            const data = {...currentUser.currentUser ,tokenId:token}
+            db_Drivers.update(data)
+        });
+        const subA = Notifications.addNotificationReceivedListener(
+            (notification) => {}
+        );
+        return () => {
+            Notifications.removeNotificationSubscription(subA);
+        };
+    }, []);
 
     useEffect(() => {
-        // console.log(currentUser.currentUser);
         const db_Transactions = app
             .database()
             .ref()
-            .child(`/system/transactions/pending`);
+            .child(`/transactions`)
+            .orderByChild("driverId")
+            .equalTo(currentUser.currentUser.driverId);
         db_Transactions.on("value", (snap) => {
             if (snap.val()) {
-                //    const result =  Object.values(snap.val()).filter(transaction=>transaction.driverId === currentUser.driverId)
-                //    totalTransaction(result)
                 const result = Object.values(snap.val()).filter(
                     (transaction) =>
                         transaction.driverId === currentUser.driverId
@@ -71,9 +109,7 @@ const HomeScreen = () => {
         });
     }, []);
 
-    const ShowTransaction = () => {
-        console.log("---------Tran____");
-        console.log(transactions);
+    const ShowTransaction = useCallback(() => {
         const view = transactions.map((transaction, index) => {
             const senderLat = Number(transaction.shippingInfo.sender.lat);
             const senderLong = Number(transaction.shippingInfo.sender.long);
@@ -84,28 +120,32 @@ const HomeScreen = () => {
             const toAddress = {
                 latitude: receiverLat,
                 longitude: receiverLong,
-            }; 
+            };
+
+            const senderAdd = transaction.shippingInfo.sender.address
+            const receiverAdd = transaction.shippingInfo.receiver.address
+
             return (
                 <React.Fragment key={index}>
-                    <Marker 
+                    <Marker
                         image={require("../../assets/userLocation.png")}
                         coordinate={fromAddress}
                         pinColor={"purple"}
-                        title={"title"}
-                        description={"description"}
+                        title={"Nơi lấy hàng"}
+                        description={senderAdd}
                     />
-                    <Marker 
+                    <Marker
                         image={require("../../assets/destination.png")}
                         coordinate={toAddress}
                         pinColor={"purple"}
-                        title={"title"}
-                        description={"description"}
+                        title={"Nơi giao hàng"}
+                        description={receiverAdd}
                     />
                 </React.Fragment>
             );
         });
-        return view
-    };
+        return view;
+    }, [transactions]);
 
     return (
         <View style={styles.container}>
@@ -114,29 +154,17 @@ const HomeScreen = () => {
                 mapType="terrain"
                 style={styles.mapView}
             >
-                {/* {currentLocation && (
+                {currentLocation && (
                     <Marker
-                        image={require("../../assets/userLocation.png")}
+                        image={require("../../assets/teamLocation.png")}
                         coordinate={currentLocation}
                         pinColor={"purple"}
                         title={"title"}
                         description={"description"}
                     />
-                )} */}
-                    {transactions ? (
-                        <ShowTransaction/>
-                        
-                    ):null}
+                )}
+                {transactions ? <ShowTransaction /> : null}
             </MapView>
-
-            <Pressable
-                style={styles.btn_view_options}
-                onPress={() => {
-                    setshowOptions(true);
-                }}
-            >
-                <Ionicons name="md-menu" size={38} color="white" />
-            </Pressable>
 
             {showOptions ? (
                 <Pressable
@@ -145,7 +173,16 @@ const HomeScreen = () => {
                         setshowOptions(false);
                     }}
                 ></Pressable>
-            ) : null}
+            ) : (
+                <Pressable
+                    style={styles.btn_view_options}
+                    onPress={() => {
+                        setshowOptions(true);
+                    }}
+                >
+                    <Ionicons name="md-menu" size={38} color="blue" />
+                </Pressable>
+            )}
             {showOptions ? (
                 <View style={[styles.options_bar_content]}>
                     <Text
@@ -160,45 +197,61 @@ const HomeScreen = () => {
                         Chọn chế độ hiển thị
                     </Text>
                     <Pressable
-                        style={styles.item_viewmode}
+                        style={({ pressed }) => [
+                            {
+                                backgroundColor:
+                                    active === "all" ? "green" : "blue",
+                            },
+                            styles.item_viewmode,
+                        ]}
                         onPress={() => {
-                            alert("change view mode");
+                            setTransactions(totalTransaction);
+                            setshowOptions(false);
+                            setActive("all");
                         }}
                     >
-                        <Text style={{ color: "black", fontSize: 20 }}>
-                            Select Item
+                        <Text
+                            style={{
+                                color: "white",
+                                fontSize: 20,
+                                fontWeight: "600",
+                            }}
+                        >
+                            Hiển thị tất cả
                         </Text>
                     </Pressable>
-                    <Pressable
-                        style={styles.item_viewmode}
-                        onPress={() => {
-                            alert("change view mode");
-                        }}
-                    >
-                        <Text style={{ color: "black", fontSize: 20 }}>
-                            Select Item
-                        </Text>
-                    </Pressable>
-                    <Pressable
-                        style={styles.item_viewmode}
-                        onPress={() => {
-                            alert("change view mode");
-                        }}
-                    >
-                        <Text style={{ color: "black", fontSize: 20 }}>
-                            Select Item
-                        </Text>
-                    </Pressable>
-                    <Pressable
-                        style={styles.item_viewmode}
-                        onPress={() => {
-                            alert("change view mode");
-                        }}
-                    >
-                        <Text style={{ color: "black", fontSize: 20 }}>
-                            Select Item
-                        </Text>
-                    </Pressable>
+                    {totalTransaction &&
+                        totalTransaction.map((tran, index) => {
+                            return (
+                                <Pressable
+                                    key={index}
+                                    style={({ pressed }) => [
+                                        {
+                                            backgroundColor:
+                                                active === tran.transportCode
+                                                    ? "green"
+                                                    : "blue",
+                                        },
+                                        styles.item_viewmode,
+                                    ]}
+                                    onPress={() => {
+                                        setTransactions([tran]);
+                                        setshowOptions(false);
+                                        setActive(tran.transportCode);
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: "white",
+                                            fontSize: 20,
+                                            fontWeight: "600",
+                                        }}
+                                    >
+                                        {tran.transportCode}
+                                    </Text>
+                                </Pressable>
+                            );
+                        })}
                 </View>
             ) : null}
         </View>
@@ -209,7 +262,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: "blue",
         width,
-        height,
+        height: height - 45,
         position: "relative",
     },
     mapView: {
@@ -243,7 +296,7 @@ const styles = StyleSheet.create({
     },
     btn_view_options: {
         position: "absolute",
-        top: 35,
+        top: 25,
         right: 25,
     },
     options_bar: {
@@ -265,7 +318,7 @@ const styles = StyleSheet.create({
     },
     item_viewmode: {
         padding: 15,
-        borderBottomColor: "black",
+        borderBottomColor: "white",
         borderBottomWidth: 1,
     },
 });

@@ -12,21 +12,21 @@ export default function App({ children }) {
             <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
             <View style={styles.nav}>
                 <Link to="/home" underlayColor="#f0f4f7" style={styles.navItem}>
-                    <Text>HOME</Text>
+                    <Text  style={styles.navName}>HOME</Text>
                 </Link>
                 <Link
                     to="/transaction"
                     underlayColor="#f0f4f7"
                     style={styles.navItem}
                 >
-                    <Text>History</Text>
+                    <Text  style={styles.navName}>History</Text>
                 </Link>
                 <Link
                     to="/history"
                     underlayColor="#f0f4f7"
                     style={styles.navItem}
                 >
-                    <Text>Transaction</Text>
+                    <Text  style={styles.navName}>Transaction</Text>
                 </Link>
             </View>
         </>
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     nav: {
+        height: 45,
         flexDirection: "row",
         justifyContent: "space-around",
         backgroundColor: "green",
@@ -75,6 +76,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         color: "red",
+        backgroundColor: "blue",
+
     },
     subNavItem: {
         padding: 5,
@@ -83,4 +86,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 15,
     },
+    navName:{
+        fontWeight: 'bold',
+        fontSize: 16,
+        color: 'white'
+    }
 });

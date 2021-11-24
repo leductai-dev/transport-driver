@@ -17,12 +17,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 const { width, height } = Dimensions.get("screen");
 import { useHistory } from "react-router-dom";
 import { app } from "../firebaseConfig";
+import convertDate from "../ConvertDate";
 
 export default function TransactionItem({ data }) {
     const [customer, setCustomer] = React.useState({});
 
     const history = useHistory();
-    console.log(data);
     React.useEffect(() => {
         try {
             // const customer_db = app
@@ -32,7 +32,7 @@ export default function TransactionItem({ data }) {
             const customer_db = app
                 .database()
                 .ref()
-                .child("/Customers/FBPlVDzJlVNDRDGRohP2L03ahc02");
+                .child(`/customers/${data.customerId}`);
             customer_db.once("value", (snap) => {
                 if (snap.val()) {
                     setCustomer(snap.val());
@@ -97,7 +97,7 @@ export default function TransactionItem({ data }) {
                         <View style={styles.wrapInfo}>
                             <Text style={styles.clName}>{customer.name}</Text>
                             <Text style={styles.clPhone}>Phone: {customer.phone}</Text>
-                            <Text style={styles.clEmail}>Ngày khởi tạo: 20/12/2021</Text>
+                            <Text style={styles.clEmail}>Ngày khởi tạo: {convertDate(data.initialTime)}</Text>
                             
                         </View>
                     </View>
@@ -124,10 +124,10 @@ export default function TransactionItem({ data }) {
                             style={styles.button}
                             color='#fff'
                             onPress={() => {
-                                // history.push({
-                                //     pathname: "./transaction-detail",
-                                //     state: { data, customer },
-                                // });
+                                history.push({
+                                    pathname: "./transaction-detail",
+                                    state: { data, customer },
+                                });
                             }}
                         >
                             <Text style={{color: 'white'}}>Chi tiết</Text>

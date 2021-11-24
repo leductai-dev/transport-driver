@@ -2,7 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
+    "a": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject"
@@ -11,6 +11,7 @@
     "@expo/vector-icons": "^12.0.5",
     "expo": "~42.0.1",
     "expo-location": "~12.1.2",
+    "expo-notifications": "~0.12.3",
     "expo-status-bar": "~1.0.4",
     "firebase": "^8.2.3",
     "react": "16.13.1",
@@ -19,7 +20,7 @@
     "react-native-maps": "0.28.0",
     "react-native-pager-view": "5.0.12",
     "react-native-tab-view": "^3.1.1",
-    "react-native-web": "~0.13.12",
+    "react-native-web": "^0.17.5",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.2.0",
     "react-router-native": "^5.2.1",

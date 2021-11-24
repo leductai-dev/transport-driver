@@ -7,6 +7,8 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
+    Pressable,
     Alert,
 } from "react-native";
 import { Link } from "react-router-native";
@@ -18,38 +20,30 @@ import { loginUser } from "../Actions/Actions";
 
 const Login = () => {
     const [text, onChangeText] = React.useState("421602");
+    const [loading, setLoading] = React.useState(false);
+
     const history = useHistory();
     const dispatch = useDispatch();
 
     const handleSubmit = () => {
-        console.log(text);
-        const db_Drivers = app.database().ref().child(`/drivers`);
-        try {
-            db_Drivers.on("value", (snap) => {
-                if (snap.val()) {
-                    let isTrue = false;
-                    let currentUser;
-                    Object.values(snap.val()).forEach((driver) => {
-                        if (driver.loginCode == text) {
-                            isTrue = true;
-                            currentUser = driver;
-                        }
-                    });
-                    if (isTrue) {
-                        dispatch(loginUser(currentUser));
-                            history.push("/home");
-                    } else {
-                        Alert.alert(
-                            "Mã đăng nhập không đúng. Vui lòng thử lại!"
-                        );
-                    }
-                } else {
-                    Alert.alert("Có lỗi xảy ra.");
-                }
-            });
-        } catch (error) {
-            Alert.alert("Có lỗi xảy ra.");
-        }
+        console.log(1);
+        setLoading(true)
+        const db_Drivers = app
+            .database()
+            .ref()
+            .child(`/drivers`)
+            .orderByChild("code")
+            .equalTo(421602);
+
+        db_Drivers.on("value", (snap) => {
+            if (snap.val()) {
+                console.log(1);
+                dispatch(loginUser(Object.values(snap.val())[0]));
+                history.push("/home");
+            } else {
+                Alert.alert("Mã đăng nhập không đúng. Vui lòng thử lại!");
+            }
+        });
     };
 
     return (
@@ -60,7 +54,7 @@ const Login = () => {
             />
 
             <Link to="/home" underlayColor="#f0f4f7" style={styles.navItem}>
-                <Text>Login</Text>
+                <Text>Nhập mã để đăng nhập!</Text>
             </Link>
 
             <TextInput
@@ -68,16 +62,31 @@ const Login = () => {
                 onChangeText={onChangeText}
                 value={text}
             />
-            <Button
-                title="Sign in"
-                color="#f194ff"
-                onPress={() => handleSubmit()}
-            />
+            <Pressable style={styles.SignButton} onPress={() => handleSubmit()}>
+                <Text style={styles.signText}>Đăng nhập</Text>
+               {loading &&  <ActivityIndicator size="large" color="#fff" />}
+            </Pressable>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    signText: {
+        color: "white",
+        textAlign:'center',
+        fontWeight: 'bold',
+    },
+    SignButton: {
+        borderRadius: 10,
+        width: 150,
+        height: 50,
+        backgroundColor: "blue",
+        textAlign:'center',
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: "center",
+        alignItems: "center",
+    },
     wraper: {
         display: "flex",
         justifyContent: "center",

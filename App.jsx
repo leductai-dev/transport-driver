@@ -11,11 +11,21 @@ import { StatusBar } from "expo-status-bar";
 import { applyMiddleware, composeEnhancer, createStore } from "redux";
 import { Provider } from "react-redux";
 import Reducer from "./src/Reducers/Main";
+import * as Notifications from 'expo-notifications'
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  })
 
 export default function App() {
+    LogBox.ignoreLogs(['Remote debugger']);
     LogBox.ignoreLogs(['Setting a timer for a long period of time'])
     const store = createStore(Reducer);
-    return (
+    return (    
         <>
             <Provider store={store}>
                 <NativeRouter>

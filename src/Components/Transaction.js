@@ -14,30 +14,9 @@ import { app } from "../firebaseConfig";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function TransactionComponent({ transactionType }) {
+export default function TransactionComponent({ transactions }) {
     const [data, setData] = React.useState([]);
 
-    const currentUser = useSelector((state) => state.user).currentUser;
-    React.useEffect(() => {
-        const db_Transactions = app
-            .database()
-            .ref()
-            .child(`/system/transactions/${transactionType}`);
-        db_Transactions.on("value", (snap) => {
-            if (snap.val()) {
-                const value = Object.values(snap.val())
-                 const myTransactions  = []
-                  value.forEach(
-                    (transaction) => {
-                        if(transaction.driverId !== currentUser.driverId){
-                            myTransactions.push(transaction)
-                        }
-                    }
-                );
-                setData(myTransactions);
-            }
-        });
-    }, []);
     return (
         <>
             <StatusBar style="auto" />
@@ -56,8 +35,8 @@ export default function TransactionComponent({ transactionType }) {
                 </View>
             </View>
             <ScrollView style={[styles.scene]}>
-                {data &&
-                    data.map((transaction,index) => {
+                {transactions &&
+                    transactions.map((transaction,index) => {
                         return <TransantionItem data={transaction} key={index} />;
                     })} 
             </ScrollView>
