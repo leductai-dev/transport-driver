@@ -80,7 +80,9 @@ export default function TransactionItem({ data }) {
                             fontSize: 20,
                             color: "#1b3a57",
                         }}
-                    >Mã vận chuyển: TP-578-458</Text>
+                    >
+                        Mã vận chuyển: TP-578-458
+                    </Text>
                     <View
                         style={{
                             flexDirection: "row",
@@ -96,21 +98,39 @@ export default function TransactionItem({ data }) {
                         />
                         <View style={styles.wrapInfo}>
                             <Text style={styles.clName}>{customer.name}</Text>
-                            <Text style={styles.clPhone}>Phone: {customer.phone}</Text>
-                            <Text style={styles.clEmail}>Ngày khởi tạo: {convertDate(data.initialTime)}</Text>
-                            
+                            <Text style={styles.clPhone}>
+                                Phone: {customer.phone}
+                            </Text>
+                            <Text style={styles.clEmail}>
+                                Ngày khởi tạo: {convertDate(data.initialTime)}
+                            </Text>
                         </View>
                     </View>
                     <View
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            justifyContent: 'flex-end',
+                            justifyContent: "flex-end",
                             marginTop: 10,
                         }}
                     >
+                        {data.status === "driverPending" && (
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => {
+                                    // history.push({
+                                    //     pathname: "./transaction-detail",
+                                    //     state: { data, customer },
+                                    // });
+                                }}
+                            >
+                                <Text style={{ color: "white" }}>Từ chối</Text>
+                            </TouchableOpacity>
+                        )}
+
                         <TouchableOpacity
                             style={styles.button}
+                            color="#fff"
                             onPress={() => {
                                 history.push({
                                     pathname: "./transaction-detail",
@@ -118,19 +138,7 @@ export default function TransactionItem({ data }) {
                                 });
                             }}
                         >
-                            <Text style={{color: 'white'}}>Từ chối</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.button}
-                            color='#fff'
-                            onPress={() => {
-                                history.push({
-                                    pathname: "./transaction-detail",
-                                    state: { data, customer },
-                                });
-                            }}
-                        >
-                            <Text style={{color: 'white'}}>Chi tiết</Text>
+                            <Text style={{ color: "white" }}>Chi tiết</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -148,13 +156,13 @@ const styles = StyleSheet.create({
     Content: {
         padding: 10,
         backgroundColor: "cadetblue",
-        borderRadius: 8
+        borderRadius: 8,
     },
-    button:{
-        backgroundColor: 'blue',
+    button: {
+        backgroundColor: "blue",
         padding: 8,
         marginLeft: 10,
-        color: 'white',
-        borderRadius: 5
-    }
+        color: "white",
+        borderRadius: 5,
+    },
 });

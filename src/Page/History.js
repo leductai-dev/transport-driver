@@ -36,14 +36,14 @@ export default function TabViewExample() {
             .orderByChild("driverId")
             .equalTo(currentUser.currentUser.driverId);
 
-        db_Transactions.once("value", (snap) => {
+        db_Transactions.on("value", (snap) => {
             if (snap.val()) {
                 const value = Object.values(snap.val());
                 const _pending = [];
                 const _inProgress = [];
                 const _compeleted = [];
                 value.forEach((transaction) => {
-                    if (transaction.status === "pending") {
+                    if (transaction.status === "driverPending") {
                         _pending.push(transaction);
                     }
                     if (transaction.status === "inProgress") {

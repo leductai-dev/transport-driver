@@ -73,8 +73,6 @@ const HomeScreen = () => {
     
     React.useEffect(() => {
         registerForPushNotificationsAsync().then((token) => {
-            console.log("-----token--------")
-            console.log(token)
             const db_Drivers = app
             .database()
             .ref()

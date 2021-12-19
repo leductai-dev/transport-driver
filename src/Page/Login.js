@@ -19,25 +19,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../Actions/Actions";
 
 const Login = () => {
-    const [text, onChangeText] = React.useState("421602");
+    const [text, onChangeText] = React.useState("144312");
     const [loading, setLoading] = React.useState(false);
 
     const history = useHistory();
     const dispatch = useDispatch();
 
     const handleSubmit = () => {
-        console.log(1);
         setLoading(true)
         const db_Drivers = app
             .database()
             .ref()
             .child(`/drivers`)
             .orderByChild("code")
-            .equalTo(421602);
+            .equalTo(144312);
 
         db_Drivers.on("value", (snap) => {
             if (snap.val()) {
-                console.log(1);
                 dispatch(loginUser(Object.values(snap.val())[0]));
                 history.push("/home");
             } else {
