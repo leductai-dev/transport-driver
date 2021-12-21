@@ -73,15 +73,15 @@ export default function TransactionItem({ data }) {
             ) : null}
         </View> */}
             <View style={styles.Wraper}>
-                <View elevation={3} style={styles.Content}>
+                <View elevation={10} style={styles.Content}>
                     <Text
                         style={{
-                            fontWeight: "bold",
+                            fontWeight: "600",
                             fontSize: 20,
-                            color: "#1b3a57",
+                            color: "#fff",
                         }}
                     >
-                        Mã vận chuyển: TP-578-458
+                        Mã vận chuyển: {data?.transportCode}
                     </Text>
                     <View
                         style={{
@@ -91,17 +91,23 @@ export default function TransactionItem({ data }) {
                         }}
                     >
                         <Image
-                            source={{
-                                uri: "https://reactnative.dev/img/tiny_logo.png",
-                            }}
+                            source={require("../../assets/customer.jpg")}
                             style={{ width: 60, height: 60, marginRight: 20 }}
                         />
-                        <View style={styles.wrapInfo}>
-                            <Text style={styles.clName}>{customer.name}</Text>
-                            <Text style={styles.clPhone}>
+                        <View     style={{
+                            color: "#fff",
+                        }}>
+                            <Text  style={{
+                            color: "#fff",
+                        }}>{customer.name}</Text>
+                            <Text  style={{
+                            color: "#fff",
+                        }}>
                                 Phone: {customer.phone}
                             </Text>
-                            <Text style={styles.clEmail}>
+                            <Text  style={{
+                            color: "#fff",
+                        }}>
                                 Ngày khởi tạo: {convertDate(data.initialTime)}
                             </Text>
                         </View>
@@ -114,20 +120,6 @@ export default function TransactionItem({ data }) {
                             marginTop: 10,
                         }}
                     >
-                        {data.status === "driverPending" && (
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => {
-                                    // history.push({
-                                    //     pathname: "./transaction-detail",
-                                    //     state: { data, customer },
-                                    // });
-                                }}
-                            >
-                                <Text style={{ color: "white" }}>Từ chối</Text>
-                            </TouchableOpacity>
-                        )}
-
                         <TouchableOpacity
                             style={styles.button}
                             color="#fff"
@@ -155,7 +147,7 @@ const styles = StyleSheet.create({
     },
     Content: {
         padding: 10,
-        backgroundColor: "cadetblue",
+        backgroundColor: "#28aecd",
         borderRadius: 8,
     },
     button: {
@@ -165,4 +157,7 @@ const styles = StyleSheet.create({
         color: "white",
         borderRadius: 5,
     },
+    wrapInfo:{
+        color: '#ffff'
+    }
 });

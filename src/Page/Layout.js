@@ -4,6 +4,7 @@ import { NativeRouter, Route, Link } from "react-router-native";
 import History from "./History";
 import Transaction from "./Transaction";
 import Home from "./Home";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function App({ children }) {
     return (
@@ -11,22 +12,23 @@ export default function App({ children }) {
             {/* <View>{children}</View> */}
             <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
             <View style={styles.nav}>
-                <Link to="/home" underlayColor="#f0f4f7" style={styles.navItem}>
-                    <Text  style={styles.navName}>HOME</Text>
-                </Link>
                 <Link
                     to="/transaction"
                     underlayColor="#f0f4f7"
                     style={styles.navItem}
                 >
-                    <Text  style={styles.navName}>History</Text>
+                   
+                    <Text style={styles.navName}>Thông báo</Text>
+                </Link>
+                <Link to="/home" underlayColor="#f0f4f7" style={styles.navItem}>
+                    <Text style={styles.navName}>Trang chủ</Text>
                 </Link>
                 <Link
                     to="/history"
                     underlayColor="#f0f4f7"
                     style={styles.navItem}
                 >
-                    <Text  style={styles.navName}>Transaction</Text>
+                    <Text style={styles.navName}>Giao dịch</Text>
                 </Link>
             </View>
         </>
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     nav: {
         height: 45,
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         backgroundColor: "green",
     },
     content: {
@@ -76,8 +78,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         color: "red",
-        backgroundColor: "blue",
-
+        backgroundColor: "#28aecd",
     },
     subNavItem: {
         padding: 5,
@@ -86,9 +87,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 15,
     },
-    navName:{
-        fontWeight: 'bold',
+    navName: {
+        fontWeight: "bold",
         fontSize: 16,
-        color: 'white'
-    }
+        color: "white",
+    },
 });

@@ -35,12 +35,13 @@ const Login = () => {
             .orderByChild("code")
             .equalTo(Number(text));
 
-        db_Drivers.on("value", (snap) => {
+        db_Drivers.once("value", (snap) => {
             if (snap.val()) {
                 dispatch(loginUser(Object.values(snap.val())[0]));
                 history.push("/home");
             } else {
                 Alert.alert("Mã đăng nhập không đúng. Vui lòng thử lại!");
+                setLoading(false)
             }
         });
     };

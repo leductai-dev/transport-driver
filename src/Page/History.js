@@ -84,7 +84,7 @@ export default function TabViewExample() {
 const styles = StyleSheet.create({
     container: {
         color: "blue",
-        height: height - 63,
+        height: 1500,
         width,
         position: "relative",
         left: 0,

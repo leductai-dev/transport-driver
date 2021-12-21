@@ -25,7 +25,7 @@ export default function TransactionComponent({ transactions }) {
                 <View style={styles.search_wraper}>
                     <TextInput
                         style={styles.search}
-                        placeholder="Enter something to filter..."
+                        placeholder="Nhập mã vận chuyển để tìm kiếm..."
                         editable
                         maxLength={40}
                     />
@@ -34,21 +34,21 @@ export default function TransactionComponent({ transactions }) {
                     </Text>
                 </View>
             </View>
-            <ScrollView style={[styles.scene]}>
                 {transactions &&
                     transactions.map((transaction,index) => {
                         return <TransantionItem data={transaction} key={index} />;
                     })} 
-            </ScrollView>
+                    {transactions && transactions.length === 0  && <View style={{
+                            textAlign: 'center',  marginTop: 20,
+                        }}><Text style={{
+                            textAlign: 'center',  marginTop: 20,
+                        }} >Không có giao dịch nào!</Text></View>}
         </>
     );
 }
 
 const styles = StyleSheet.create({
-  
-    scene: {
-        flex: 1,
-    },
+
     search_container: {
         top: 0,
         marginTop: 0,

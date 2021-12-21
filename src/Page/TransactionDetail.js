@@ -160,19 +160,13 @@ export default function TransactionDetail() {
                         marginTop: 15,
                     }}
                 >
-                    <Image
-                        source={{
-                            uri: "https://reactnative.dev/img/tiny_logo.png",
-                        }}
-                        style={{
-                            width: 60,
-                            height: 60,
-                            marginRight: 20,
-                        }}
-                    />
+                   <Image
+                            source={require("../../assets/customer.jpg")}
+                            style={{ width: 60, height: 60, marginRight: 20 }}
+                        />
                     <View style={styles.wrapInfo}>
                         <Text style={styles.clName}>
-                            Tên khách hàng:{customer.name}
+                            Tên khách hàng: {customer.name}
                         </Text>
                         <Text style={styles.clPhone}>
                             Phone: {customer.phone}
@@ -203,9 +197,10 @@ export default function TransactionDetail() {
                     <Image
                         source={require("../../assets/userLocation.png")}
                         style={{
-                            width: 60,
-                            height: 60,
+                            width: 40,
+                            height: 40,
                             marginRight: 20,
+                            marginLeft: 20
                         }}
                     />
                     <View style={styles.wrapInfo}>
@@ -242,9 +237,10 @@ export default function TransactionDetail() {
                     <Image
                         source={require("../../assets/destination.png")}
                         style={{
-                            width: 60,
-                            height: 60,
+                            width: 40,
+                            height: 40,
                             marginRight: 20,
+                            marginLeft: 20
                         }}
                     />
                     <View style={styles.wrapInfo}>
@@ -320,33 +316,21 @@ export default function TransactionDetail() {
                 </View>
                 <View style={{ marginTop: 15 }}>
                     <ScrollView horizontal={true}>
-                        <Image
-                            source={require("../../assets/product.jpg")}
-                            style={{
-                                resizeMode: "contain",
-                                width: 120,
-                                height: 80,
-                                marginRight: 10,
-                            }}
-                        />
-                        <Image
-                            source={require("../../assets/product.jpg")}
-                            style={{
-                                resizeMode: "contain",
-                                width: 120,
-                                height: 80,
-                                marginRight: 10,
-                            }}
-                        />
-                        <Image
-                            source={require("../../assets/product.jpg")}
-                            style={{
-                                resizeMode: "contain",
-                                width: 120,
-                                height: 80,
-                                marginRight: 10,
-                            }}
-                        />
+                        {data?.shippingInfo?.productInfo?.imageUrl?.split(',')?.map((item, index)=>{
+                            return   <Image key={index}
+                            source={{
+                               uri: item,
+                             }}
+                           style={{
+                               resizeMode: "contain",
+                               width: 120,
+                               height: 80,
+                               marginRight: 10,
+                           }}
+                       />
+                        })}
+                      
+                      
                     </ScrollView>
                 </View>
             </View>
@@ -369,8 +353,13 @@ export default function TransactionDetail() {
                     }}
                 >
                     <MapView
-                        initialRegion={mapRegion}
                         mapType="terrain"
+                        initialRegion={{
+                            latitude: Number(data?.shippingInfo.sender.lat),
+                            longitude: Number(data?.shippingInfo.sender.long),
+                            longitudeDelta: 0.0922,
+                            latitudeDelta: 0.0421,
+                        }}
                         style={{
                             position: "relative",
                             height: 400,
@@ -379,13 +368,28 @@ export default function TransactionDetail() {
                     >
                         <Marker
                             coordinate={{
-                                latitude: 16.0774372,
-                                longitude: 108.1481306,
+                                latitude: Number(data?.shippingInfo.sender.lat),
+                                longitude: Number(data?.shippingInfo.sender.long),
                             }}
                             pinColor={"purple"} // any color
                             title={"title"}
                             description={"description"}
-                        />
+                            >
+                            <Image source={require("../../assets/userLocation.png")} style={{height: 35, width:35 }} />
+   
+   </Marker>
+                         <Marker
+                            coordinate={{
+                                latitude: Number(data?.shippingInfo.receiver.lat),
+                                longitude: Number(data?.shippingInfo.receiver.long),
+                            }}
+                            pinColor={"purple"} // any color
+                            title={"title"}
+                            description={"description"}
+                        >
+                         <Image source={require("../../assets/destination.png")} style={{height: 35, width:35 }} />
+
+</Marker>
                     </MapView>
                 </View>
             </View>
