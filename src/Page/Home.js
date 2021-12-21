@@ -99,10 +99,10 @@ const HomeScreen = () => {
             if (snap.val()) {
                 const result = Object.values(snap.val()).filter(
                     (transaction) =>
-                        transaction.driverId === currentUser.driverId
+                        transaction.status === 'inProgress'
                 );
-                setTotalTransaction(Object.values(snap.val()));
-                setTransactions(Object.values(snap.val()));
+                setTotalTransaction(result);
+                setTransactions(result);
             }
         });
     }, []);

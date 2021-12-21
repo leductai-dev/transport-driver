@@ -19,20 +19,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../Actions/Actions";
 
 const Login = () => {
-    const [text, onChangeText] = React.useState("144312");
+    const [text, onChangeText] = React.useState('');
     const [loading, setLoading] = React.useState(false);
 
     const history = useHistory();
     const dispatch = useDispatch();
 
     const handleSubmit = () => {
+        console.log(text)
         setLoading(true)
         const db_Drivers = app
             .database()
             .ref()
             .child(`/drivers`)
             .orderByChild("code")
-            .equalTo(144312);
+            .equalTo(Number(text));
 
         db_Drivers.on("value", (snap) => {
             if (snap.val()) {

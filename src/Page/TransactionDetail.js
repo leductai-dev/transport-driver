@@ -514,7 +514,7 @@ export default function TransactionDetail() {
                 >
                     <Pressable
                         style={[styles.mybtn]}
-                        onPress={() => setModalVisible(!modalVisible)}
+                        onPress={() => {}}
                     >
                         <Text style={styles.textStyle}>Từ chối yêu cầu</Text>
                     </Pressable>
